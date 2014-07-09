@@ -25,7 +25,7 @@ from neutronclient.openstack.common.gettextutils import _
 
 
 class ListHealthMonitor(neutronV20.ListCommand):
-    """List healthmonitors that belong to a given tenant."""
+    """DEPRECATED! List healthmonitors that belong to a given tenant."""
 
     resource = 'health_monitor'
     log = logging.getLogger(__name__ + '.ListHealthMonitor')
@@ -35,14 +35,14 @@ class ListHealthMonitor(neutronV20.ListCommand):
 
 
 class ShowHealthMonitor(neutronV20.ShowCommand):
-    """Show information of a given healthmonitor."""
+    """DEPRECATED! Show information of a given healthmonitor."""
 
     resource = 'health_monitor'
     log = logging.getLogger(__name__ + '.ShowHealthMonitor')
 
 
 class CreateHealthMonitor(neutronV20.CreateCommand):
-    """Create a healthmonitor."""
+    """DEPRECATED! Create a healthmonitor."""
 
     resource = 'health_monitor'
     log = logging.getLogger(__name__ + '.CreateHealthMonitor')
@@ -106,7 +106,7 @@ class CreateHealthMonitor(neutronV20.CreateCommand):
 
 
 class UpdateHealthMonitor(neutronV20.UpdateCommand):
-    """Update a given healthmonitor."""
+    """DEPRECATED! Update a given healthmonitor."""
 
     resource = 'health_monitor'
     log = logging.getLogger(__name__ + '.UpdateHealthMonitor')
@@ -114,14 +114,14 @@ class UpdateHealthMonitor(neutronV20.UpdateCommand):
 
 
 class DeleteHealthMonitor(neutronV20.DeleteCommand):
-    """Delete a given healthmonitor."""
+    """DEPRECATED! Delete a given healthmonitor."""
 
     resource = 'health_monitor'
     log = logging.getLogger(__name__ + '.DeleteHealthMonitor')
 
 
 class AssociateHealthMonitor(neutronV20.NeutronCommand):
-    """Create a mapping between a health monitor and a pool."""
+    """DEPRECATED! Create a mapping between a health monitor and a pool."""
 
     log = logging.getLogger(__name__ + '.AssociateHealthMonitor')
     resource = 'health_monitor'
@@ -149,7 +149,7 @@ class AssociateHealthMonitor(neutronV20.NeutronCommand):
 
 
 class DisassociateHealthMonitor(neutronV20.NeutronCommand):
-    """Remove a mapping from a health monitor to a pool."""
+    """DEPRECATED! Remove a mapping from a health monitor to a pool."""
 
     log = logging.getLogger(__name__ + '.DisassociateHealthMonitor')
     resource = 'health_monitor'

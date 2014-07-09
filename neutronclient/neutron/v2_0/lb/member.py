@@ -23,7 +23,7 @@ from neutronclient.openstack.common.gettextutils import _
 
 
 class ListMember(neutronV20.ListCommand):
-    """List members that belong to a given tenant."""
+    """DEPRECATED! List members that belong to a given tenant."""
 
     resource = 'member'
     log = logging.getLogger(__name__ + '.ListMember')
@@ -35,14 +35,14 @@ class ListMember(neutronV20.ListCommand):
 
 
 class ShowMember(neutronV20.ShowCommand):
-    """Show information of a given member."""
+    """DEPRECATED! Show information of a given member."""
 
     resource = 'member'
     log = logging.getLogger(__name__ + '.ShowMember')
 
 
 class CreateMember(neutronV20.CreateCommand):
-    """Create a member."""
+    """DEPRECATED! Create a member."""
 
     resource = 'member'
     log = logging.getLogger(__name__ + '.CreateMember')
@@ -86,14 +86,14 @@ class CreateMember(neutronV20.CreateCommand):
 
 
 class UpdateMember(neutronV20.UpdateCommand):
-    """Update a given member."""
+    """DEPRECATED! Update a given member."""
 
     resource = 'member'
     log = logging.getLogger(__name__ + '.UpdateMember')
 
 
 class DeleteMember(neutronV20.DeleteCommand):
-    """Delete a given member."""
+    """DEPRECATED! Delete a given member."""
 
     resource = 'member'
     log = logging.getLogger(__name__ + '.DeleteMember')

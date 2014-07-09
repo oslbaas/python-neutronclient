@@ -27,7 +27,7 @@ def _format_provider(pool):
 
 
 class ListPool(neutronV20.ListCommand):
-    """List pools that belong to a given tenant."""
+    """DEPRECATED! List pools that belong to a given tenant."""
 
     resource = 'pool'
     log = logging.getLogger(__name__ + '.ListPool')
@@ -39,14 +39,14 @@ class ListPool(neutronV20.ListCommand):
 
 
 class ShowPool(neutronV20.ShowCommand):
-    """Show information of a given pool."""
+    """DEPRECATED! Show information of a given pool."""
 
     resource = 'pool'
     log = logging.getLogger(__name__ + '.ShowPool')
 
 
 class CreatePool(neutronV20.CreateCommand):
-    """Create a pool."""
+    """DEPRECATED! Create a pool."""
 
     resource = 'pool'
     log = logging.getLogger(__name__ + '.CreatePool')
@@ -99,21 +99,21 @@ class CreatePool(neutronV20.CreateCommand):
 
 
 class UpdatePool(neutronV20.UpdateCommand):
-    """Update a given pool."""
+    """DEPRECATED! Update a given pool."""
 
     resource = 'pool'
     log = logging.getLogger(__name__ + '.UpdatePool')
 
 
 class DeletePool(neutronV20.DeleteCommand):
-    """Delete a given pool."""
+    """DEPRECATED! Delete a given pool."""
 
     resource = 'pool'
     log = logging.getLogger(__name__ + '.DeletePool')
 
 
 class RetrievePoolStats(neutronV20.ShowCommand):
-    """Retrieve stats for a given pool."""
+    """DEPRECATED! Retrieve stats for a given pool."""
 
     resource = 'pool'
     log = logging.getLogger(__name__ + '.RetrievePoolStats')

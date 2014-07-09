@@ -23,7 +23,7 @@ from neutronclient.openstack.common.gettextutils import _
 
 
 class ListVip(neutronV20.ListCommand):
-    """List vips that belong to a given tenant."""
+    """DEPRECATED! List vips that belong to a given tenant."""
 
     resource = 'vip'
     log = logging.getLogger(__name__ + '.ListVip')
@@ -34,14 +34,14 @@ class ListVip(neutronV20.ListCommand):
 
 
 class ShowVip(neutronV20.ShowCommand):
-    """Show information of a given vip."""
+    """DEPRECATED! Show information of a given vip."""
 
     resource = 'vip'
     log = logging.getLogger(__name__ + '.ShowVip')
 
 
 class CreateVip(neutronV20.CreateCommand):
-    """Create a vip."""
+    """DEPRECATED! Create a vip."""
 
     resource = 'vip'
     log = logging.getLogger(__name__ + '.CreateVip')
@@ -103,14 +103,14 @@ class CreateVip(neutronV20.CreateCommand):
 
 
 class UpdateVip(neutronV20.UpdateCommand):
-    """Update a given vip."""
+    """DEPRECATED! Update a given vip."""
 
     resource = 'vip'
     log = logging.getLogger(__name__ + '.UpdateVip')
 
 
 class DeleteVip(neutronV20.DeleteCommand):
-    """Delete a given vip."""
+    """DEPRECATED! Delete a given vip."""
 
     resource = 'vip'
     log = logging.getLogger(__name__ + '.DeleteVip')
