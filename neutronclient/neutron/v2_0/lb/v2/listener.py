@@ -81,8 +81,6 @@ class CreateListener(neutronV20.CreateCommand):
 		        'loadbalancer_id': parsed_args.loadbalancer_id
             },
         }
-#        neutronV20.update_dict(parsed_args, body[self.resource],
-#                               ['loadbalancer_id'])
         return body
 
 

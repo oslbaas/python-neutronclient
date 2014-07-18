@@ -55,13 +55,10 @@ class CreateLoadBalancer(neutronV20.CreateCommand):
             dest='admin_state', action='store_false',
             help=_('Set admin state up to false'))
         parser.add_argument(
-            '--name',
-            required=True,
+            'name', metavar='NAME',
             help=_('Name of the load balancer'))
         parser.add_argument(
-            '--vip-subnet-id',
-            dest='vip_subnet_id',
-            required=True, metavar='SUBNET',
+            'vip_subnet_id', metavar='VIP_SUBNET_ID',
             help=_('ID of the load balancer subnet'))
 
     def args2body(self, parsed_args):

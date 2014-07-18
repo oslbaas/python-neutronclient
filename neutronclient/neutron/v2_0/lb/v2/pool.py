@@ -16,10 +16,21 @@
 #    under the License.
 #
 
+import argparse
 import logging
 
 from neutronclient.neutron import v2_0 as neutronV20
 from neutronclient.openstack.common.gettextutils import _
+
+def _verify_and_parse_session_persistence(parsed_args):
+    persistence = None
+    if parsed_args.session_persistence:
+        parts = parsed_args.session_persistence.split(':')
+        if not len(parts) == 2:
+           raise Exception('Incorrect --session-persistence format.'
+                         ' Format is <TYPE>:<VALUE>')
+        persistence = {'type': parts[0], 'cookie': parts[1]}
+    return persistence
 
 
 class ListPool(neutronV20.ListCommand):
@@ -38,7 +49,15 @@ class ShowPool(neutronV20.ShowCommand):
     """Show information of a given pool."""
 
     resource = 'pool'
+    shadow_resource = 'lbaas_pool'
     log = logging.getLogger(__name__ + '.ShowPool')
+
+    def cleanup_data(self, data):
+        member_info = []
+        for member in data['pool']['members']:
+            member_info.append(member['id'])
+        data['pool']['members'] = member_info
+        return data
 
 
 class CreatePool(neutronV20.CreateCommand):
@@ -60,28 +79,32 @@ class CreatePool(neutronV20.CreateCommand):
             '--healthmonitor-id',
             help=_('ID of the health monitor to use'))
         parser.add_argument(
+            'name', metavar='NAME',
+            help=_('The name of the pool'))
+        parser.add_argument(
+            '--session-persistence', metavar='TYPE',
+            help=_('The type of session persistence to use.'))
+        parser.add_argument(
             '--lb-algorithm',
-            required=True,
+            required=True, metavar='LB_ALGORITHM',
             choices=['ROUND_ROBIN', 'LEAST_CONNECTIONS', 'SOURCE_IP'],
             help=_('The algorithm used to distribute load between the members '
                    'of the pool'))
         parser.add_argument(
-            '--name',
-            required=True,
-            help=_('The name of the pool'))
-        parser.add_argument(
             '--protocol',
-            required=True,
+            required=True, metavar='PROTOCOL',
             choices=['HTTP', 'HTTPS', 'TCP'],
             help=_('Protocol for balancing'))
 
     def args2body(self, parsed_args):
+        _persistence = _verify_and_parse_session_persistence(parsed_args)
         body = {
             self.resource: {
                 'name': parsed_args.name,
                 'admin_state_up': parsed_args.admin_state,
                 'protocol': parsed_args.protocol,
                 'lb_algorithm': parsed_args.lb_algorithm,
+                'session_persistence ': _persistence
             },
         }
         neutronV20.update_dict(parsed_args, body[self.resource],
@@ -93,6 +116,7 @@ class UpdatePool(neutronV20.UpdateCommand):
     """Update a given pool."""
 
     resource = 'pool'
+    shadow_resource = 'lbaas_pool'
     log = logging.getLogger(__name__ + '.UpdatePool')
 
 
@@ -100,4 +124,5 @@ class DeletePool(neutronV20.DeleteCommand):
     """Delete a given pool."""
 
     resource = 'pool'
+    shadow_resource = 'lbaas_pool'
     log = logging.getLogger(__name__ + '.DeletePool')

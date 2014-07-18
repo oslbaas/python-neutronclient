@@ -21,11 +21,27 @@ import logging
 from neutronclient.neutron import v2_0 as neutronV20
 from neutronclient.openstack.common.gettextutils import _
 
+def _add_pool_id_arg(self, parser):
+    parser.add_argument(
+        'pool_id', metavar='POOL',
+        help=_('ID of the member pool.'))
+
+
+def _set_parent_id(self, parsed_args):
+    self.parent_id = _get_pool_id(self, parsed_args) #parsed_args.pool_id
+    return super(self.__class__, self).get_data(parsed_args)
+
+
+def _get_pool_id(self, parsed_args):
+    return neutronV20.find_resourceid_by_name_or_id(
+         self.get_client(), 'pool', parsed_args.pool_id, 'lbaas_pool')
+
 
 class ListMember(neutronV20.ListCommand):
     """List members that belong to a given tenant."""
 
     resource = 'member'
+    shadow_resource = 'lbaas_member'
     log = logging.getLogger(__name__ + '.ListMember')
     list_columns = [
         'id', 'address', 'protocol_port', 'weight',
@@ -33,19 +49,26 @@ class ListMember(neutronV20.ListCommand):
     ]
     pagination_support = True
     sorting_support = True
+    add_known_arguments = _add_pool_id_arg
+    get_data = _set_parent_id
 
 
 class ShowMember(neutronV20.ShowCommand):
     """Show information of a given member."""
 
     resource = 'member'
+    shadow_resource = 'lbaas_member'
     log = logging.getLogger(__name__ + '.ShowMember')
+    add_known_arguments = _add_pool_id_arg
+    get_data = _set_parent_id
+    #allow_names = False
 
 
 class CreateMember(neutronV20.CreateCommand):
     """Create a member."""
 
     resource = 'member'
+    shadow_resource = 'lbaas_member'
     log = logging.getLogger(__name__ + '.CreateMember')
 
     def add_known_arguments(self, parser):
@@ -61,6 +84,7 @@ class CreateMember(neutronV20.CreateCommand):
             help=_('Weight of member in the pool (default:1, [0..256])'))
         parser.add_argument(
             '--subnet-id',
+            required=True,
             help=_('Subnet ID for the member'))
         parser.add_argument(
             '--address',
@@ -73,11 +97,11 @@ class CreateMember(neutronV20.CreateCommand):
                    'connections. '))
 
     def args2body(self, parsed_args):
-        _pool_id = neutronV20.find_resourceid_by_name_or_id(
-            self.get_client(), 'pool', parsed_args.pool_id)
+        _pool_id = _get_pool_id(self, parsed_args)
+        self.parent_id = _pool_id
         body = {
             self.resource: {
-                'pool_id': _pool_id,
+                'subnet_id': parsed_args.subnet_id,
                 'admin_state_up': parsed_args.admin_state,
                 'protocol_port': parsed_args.protocol_port,
                 'address': parsed_args.address,
@@ -92,11 +116,44 @@ class UpdateMember(neutronV20.UpdateCommand):
     """Update a given member."""
 
     resource = 'member'
+    shadow_resource = 'lbaas_member'
     log = logging.getLogger(__name__ + '.UpdateMember')
+    #add_known_arguments = _add_pool_id_arg
+    #get_data = _set_parent_id
+    allow_names = True
+
+    def add_known_arguments(self, parser):
+        parser.add_argument(
+            'pool_id', metavar='POOL',
+            help=_('ID of the pool that this member belongs to'))
+        parser.add_argument(
+            '--admin-state-down',
+            dest='admin_state', action='store_false',
+            help=_('Set admin state up to false'))
+        parser.add_argument(
+            '--weight',
+            help=_('Weight of member in the pool (default:1, [0..256])'))
+
+    def args2body(self, parsed_args):
+        _pool_id = _get_pool_id(self, parsed_args)
+        self.parent_id = _pool_id
+        body = {
+            self.resource: {
+                'admin_state_up': parsed_args.admin_state,
+            },
+        }
+        neutronV20.update_dict(parsed_args, body[self.resource],
+                               ['weight'])
+        return body
+
 
 
 class DeleteMember(neutronV20.DeleteCommand):
     """Delete a given member."""
 
     resource = 'member'
+    shadow_resource = 'lbaas_member'
     log = logging.getLogger(__name__ + '.DeleteMember')
+    add_known_arguments = _add_pool_id_arg
+    get_data = _set_parent_id
+    allow_names = False

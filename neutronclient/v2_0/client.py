@@ -170,13 +170,17 @@ class Client(object):
     ipsec_site_connections_path = "/vpn/ipsec-site-connections"
     ipsec_site_connection_path = "/vpn/ipsec-site-connections/%s"
     lbaas_loadbalancers_path = "/lbaas/loadbalancers"
-    lbaas_loadbalancer_path = "/lbaas/loadbalancer/%s"
+    lbaas_loadbalancer_path = "/lbaas/loadbalancers/%s"
     lbaas_listeners_path = "/lbaas/listeners"
-    lbaas_listener_path = "/lbaas/listener/%s"
+    lbaas_listener_path = "/lbaas/listeners/%s"
     lbaas_pools_path = "/lbaas/pools"
-    lbaas_pool_path = "/lbaas/pool/%s"
+    lbaas_pool_path = "/lbaas/pools/%s"
+    lbaas_healthmonitors_path = "/lbaas/healthmonitors"
+    lbaas_healthmonitor_path = "/lbaas/healthmonitors/%s"
+
     lbaas_members_path = "/lbaas/members"
-    lbaas_member_path = "/lbaas/member/%s"
+    lbaas_member_path = "/lbaas/members/%s"
+
     vips_path = "/lb/vips"
     vip_path = "/lb/vips/%s"
     pools_path = "/lb/pools"
@@ -219,6 +223,7 @@ class Client(object):
     L3_AGENTS = '/l3-agents'
     LOADBALANCER_POOLS = '/loadbalancer-pools'
     LOADBALANCER_AGENT = '/loadbalancer-agent'
+    LBAAS_MEMBERS = '/members'
     firewall_rules_path = "/fw/firewall_rules"
     firewall_rule_path = "/fw/firewall_rules/%s"
     firewall_policies_path = "/fw/firewall_policies"
@@ -241,10 +246,13 @@ class Client(object):
                      'ikepolicies': 'ikepolicy',
                      'ipsec_site_connections': 'ipsec_site_connection',
                      'vpnservices': 'vpnservice',
+
                      'loadbalancers': 'loadbalancer',
                      'listeners': 'listener',
                      'lbaas_pools': 'lbaas_pool',
+                     'lbaas_healthmonitors': 'lbaas_healthmonitor',
                      'lbaas_members': 'lbaas_member',
+
                      'vips': 'vip',
                      'pools': 'pool',
                      'members': 'member',
@@ -720,32 +728,62 @@ class Client(object):
         return self.delete(self.lbaas_pool_path % (lbaas_pool))
 
     @APIParamsCall
-    def list_lbaas_members(self, retrieve_all=True, **_params):
-        """Fetches a list of all lbaas_members for a tenant."""
-        return self.list('members', self.lbaas_members_path,
+    def list_lbaas_healthmonitors(self, retrieve_all=True, **_params):
+        """Fetches a list of all lbaas_healthmonitors for a tenant."""
+        return self.list('healthmonitors', self.lbaas_healthmonitors_path,
                          retrieve_all, **_params)
 
     @APIParamsCall
-    def show_lbaas_member(self, lbaas_member, **_params):
-        """Fetches information for a lbaas_member."""
-        return self.get(self.lbaas_member_path % (lbaas_member),
+    def show_lbaas_healthmonitor(self, lbaas_healthmonitor, **_params):
+        """Fetches information for a lbaas_healthmonitor."""
+        return self.get(self.lbaas_healthmonitor_path % (lbaas_healthmonitor),
                         params=_params)
 
     @APIParamsCall
-    def create_lbaas_member(self, body=None):
-        """Creates a new lbaas_member."""
-        return self.post(self.lbaas_members_path, body=body)
+    def create_lbaas_healthmonitor(self, body=None):
+        """Creates a new lbaas_healthmonitor."""
+        return self.post(self.lbaas_healthmonitors_path, body=body)
 
     @APIParamsCall
-    def update_lbaas_member(self, lbaas_member, body=None):
-        """Updates a lbaas_member."""
-        return self.put(self.lbaas_member_path % (lbaas_member),
+    def update_lbaas_healthmonitor(self, lbaas_healthmonitor, body=None):
+        """Updates a lbaas_healthmonitor."""
+        return self.put(self.lbaas_healthmonitor_path % (lbaas_healthmonitor),
                         body=body)
 
     @APIParamsCall
-    def delete_lbaas_member(self, lbaas_member):
+    def delete_lbaas_healthmonitor(self, lbaas_healthmonitor):
+        """Deletes the specified lbaas_healthmonitor."""
+        return self.delete(self.lbaas_healthmonitor_path % (lbaas_healthmonitor))
+
+
+    @APIParamsCall
+    def list_lbaas_members(self, lbaas_pool, retrieve_all=True, **_params):
+        """Fetches a list of all lbaas_members for a tenant."""
+        return self.list('members', (self.lbaas_pool_path + self.LBAAS_MEMBERS) % lbaas_pool,
+                         retrieve_all, params=_params)
+
+    @APIParamsCall
+    def show_lbaas_member(self, lbaas_member, lbaas_pool, **_params):
+        """Fetches information of a certain lbaas_member."""
+        return self.get((self.lbaas_pool_path + self.LBAAS_MEMBERS + '/%s') %
+                         (lbaas_pool, lbaas_member), params=_params)
+
+    @APIParamsCall
+    def create_lbaas_member(self, body=None, parent_id=None):
+        """Creates an lbaas_member."""
+        return self.post((self.lbaas_pool_path + self.LBAAS_MEMBERS) % parent_id,
+                        body=body)
+
+    @APIParamsCall
+    def update_lbaas_member(self, lbaas_member, lbaas_pool, body=None):
+        """Updates a lbaas_healthmonitor."""
+        return self.put((self.lbaas_pool_path + self.LBAAS_MEMBERS + '/%s') %
+                         (lbaas_pool, lbaas_member), body=body)
+
+    @APIParamsCall
+    def delete_lbaas_member(self, lbaas_member, lbaas_pool):
         """Deletes the specified lbaas_member."""
-        return self.delete(self.lbaas_member_path % (lbaas_member))
+        return self.delete((self.lbaas_pool_path + self.LBAAS_MEMBERS + '/%s') % (lbaas_pool, lbaas_member))
 
     @APIParamsCall
     def list_vips(self, retrieve_all=True, **_params):
@@ -984,6 +1022,12 @@ class Client(object):
     def list_dhcp_agent_hosting_networks(self, network, **_params):
         """Fetches a list of dhcp agents hosting a network."""
         return self.get((self.network_path + self.DHCP_AGENTS) % network,
+                        params=_params)
+
+    @APIParamsCall
+    def list_lbaas_pool_members(self, lbaas_pool, **_params):
+        """Fetches a list of dhcp agents hosting a network."""
+        return self.get((self.lbaas_pool_path + self.LBAAS_MEMBER) % lbaaas_pool,
                         params=_params)
 
     @APIParamsCall
